@@ -1,9 +1,11 @@
-from flask import Flask, render_template, url_for, flash, redirect
-from forms import RegistrationForm, LoginForm
+from flask import render_template, url_for, flash, redirect
+from usfpes import app
+from usfpes.models import User
+from usfpes.forms import RegistrationForm, LoginForm
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'adab767d91bbb625b9b8a3d637802419'
 @app.route("/")
+def index():
+    return redirect(url_for('home'))
 
 @app.route("/home")
 def home():
@@ -26,7 +28,7 @@ def login():
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
-    
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -34,6 +36,3 @@ def register():
         flash(f'Account created for {form.username.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
-
-if __name__ == '__main__':
-    app.run(debug=True)
