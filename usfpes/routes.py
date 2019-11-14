@@ -2,10 +2,11 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
-from usfpes import app,db,bcrypt
+from usfpes import app,db,bcrypt,mail
 from usfpes.models import User
 from usfpes.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, PasswordResetForm
 from flask_login import current_user,login_user,logout_user,login_required
+from flask_mail import Message
 
 @app.route("/")
 def index():
@@ -95,14 +96,22 @@ def account():
     return render_template('account.html', title='Account', image_file=image_file,form=form)
 
 def send_reset_email(user):
-    pass
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request',sender='#',recipients=[user.email])
+    msg.body = f''' To reset your password, visit the following link:
+{url_for('reset_token',token=token,_external=True)}
+
+If you did not make this request, please ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
 @app.route("/reset_password",methods=['GET','POST'])
 def reset_request():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RequestResetForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.data.email).first()
+        user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
         flash('An email has been sent with the instructions to reset your password','info')
         return redirect(url_for('login'))
@@ -117,4 +126,10 @@ def reset_token(token):
         flash('That token is either invalid or expired.','warning')
         return redirect(url_for('reset_request'))
     form = PasswordResetForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated! You are now able to log in', 'success')
+        return redirect(url_for('login'))
     return render_template('reset_token.html',title='Reset Password',form=form)
