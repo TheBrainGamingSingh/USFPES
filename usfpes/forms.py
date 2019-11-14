@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
+from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from usfpes.models import User
 
 
@@ -29,7 +30,7 @@ class RegistrationForm(FlaskForm):
     def validate_student_id(self, student_id):
         user = User.query.filter_by(student_id=student_id.data).first()
         if user:
-            raise ValidationError('That student ID is taken. Please choose a different one.')        
+            raise ValidationError('That student ID is taken. Please choose a different one.')
 
 
 class LoginForm(FlaskForm):
@@ -38,3 +39,30 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    student_id = StringField('Student ID',
+                           validators=[DataRequired(), Length(min=8, max=8)])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('That username is taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('That email is taken. Please choose a different one.')
+
+    def validate_student_id(self, student_id):
+        if student_id.data != current_user.student_id:
+            user = User.query.filter_by(student_id=student_id.data).first()
+            if user:
+                raise ValidationError('That student ID is taken. Please choose a different one.')
