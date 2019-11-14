@@ -1,9 +1,10 @@
 import os
 import secrets
+from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from usfpes import app,db,bcrypt
 from usfpes.models import User
-from usfpes.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from usfpes.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, PasswordResetForm
 from flask_login import current_user,login_user,logout_user,login_required
 
 @app.route("/")
@@ -52,6 +53,7 @@ def register():
 @app.route("/logout")
 def logout():
     logout_user()
+    flash('You have successfully logged out.', 'success')
     return redirect(url_for('home'))
 
 def save_picture(form_picture):
@@ -59,7 +61,12 @@ def save_picture(form_picture):
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path,'static/profile_pics',picture_fn)
-    form_picture.save(picture_path)
+
+    output_size = (125,125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+    #form_picture.save(picture_path)
     return picture_fn
 
 
@@ -72,7 +79,7 @@ def account():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
             current_user.image_file = picture_file
-            
+
         current_user.username = form.username.data
         current_user.email = form.email.data
         current_user.student_id = form.student_id.data
@@ -86,3 +93,28 @@ def account():
 
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file,form=form)
+
+def send_reset_email(user):
+    pass
+@app.route("/reset_password",methods=['GET','POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.data.email).first()
+        send_reset_email(user)
+        flash('An email has been sent with the instructions to reset your password','info')
+        return redirect(url_for('login'))
+    return render_template('reset_request.html',title='Reset Password',form=form)
+
+@app.route("/reset_password/<token>",methods=['GET','POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('That token is either invalid or expired.','warning')
+        return redirect(url_for('reset_request'))
+    form = PasswordResetForm()
+    return render_template('reset_token.html',title='Reset Password',form=form)

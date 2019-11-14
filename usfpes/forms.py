@@ -68,3 +68,20 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(student_id=student_id.data).first()
             if user:
                 raise ValidationError('That student ID is taken. Please choose a different one.')
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('That email is not associated with any account. Try a different one or Register.')
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired(),Length(min=8, max=20)])
+    confirm_password = PasswordField('Confirm Password',
+                                 validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')                             
