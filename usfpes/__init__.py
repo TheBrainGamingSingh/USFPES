@@ -26,3 +26,4 @@ app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
 mail = Mail(app)
 
 from usfpes import routes
+from usfpes import handlers
