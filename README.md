@@ -1,2 +1,6 @@
 ### Minor Project
-### Semester 5
+To install
+
+```bash
+pip install -r requirements.txt
+```
