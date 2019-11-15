@@ -1,4 +1,8 @@
 from usfpes import app
+import socket
+
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
 
 if __name__ == '__main__':
-    app.run(debug=True,host='192.168.1.104',port='8888')
+    app.run(debug=True,host=IPAddr,port='8000')
