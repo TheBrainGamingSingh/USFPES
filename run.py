@@ -1,6 +1,6 @@
 from usfpes import app
 import socket
-
+#before blueprinting
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 
