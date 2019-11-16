@@ -57,6 +57,29 @@ def logout():
     flash('You have successfully logged out.', 'success')
     return redirect(url_for('home'))
 
+names = ['Procastination Survey',
+         'Self Esteem Survey',
+         'Ten Item Personality Test']
+ques = ['https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=YTJzz',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=vfQcw',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=Z2huR']
+
+@app.route("/psyeve/<int:num>",methods=['GET', 'POST'])
+@login_required
+def psyeve(num):
+    if num > len(ques):
+        return render_template('errors/404.html'), 404
+    if num == len(ques):
+        flash('You have successfully filled all the surveys','success')
+        current_user.filled_survey = True
+        db.session.commit()
+        return redirect(url_for('home'))
+    #if current_user.filled_survey:
+    #    flash('You have already filled all the surveys','info')
+    #    return redirect(url_for('home'))
+
+    return render_template('psy_tests/list_of_tests.html',title='Psychometric Evaluation Portal',ques=ques,names=names,num=num)
+
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
