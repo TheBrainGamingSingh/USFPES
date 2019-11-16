@@ -6,8 +6,10 @@
   <br>
   {% for i in range(ques | length) %}
        <p class="text-secondary">
-       {% if i >= num %}
-       <h6>{{i + 1}}. <a href="{{ ques[i] }}">{{names[i]}}</a></h6> &#x274C You have not filled this survey.
+       {% if i > num %}
+       <h6>{{i + 1}}. {{names[i]}}</h6> &#x274C You have not filled this survey.
+       {% elif i == num %}
+       <h6>{{i + 1}}. <a href="{{ ques[i] }}">{{names[i]}}</a></h6> &#9997 Fill this survey to proceed.
        {% else %}
        <h6>{{i + 1}}. {{names[i]}}</h6> &#9989 Great! You have filled this survey.
        {% endif %}
