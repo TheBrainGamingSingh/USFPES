@@ -74,9 +74,9 @@ def psyeve(num):
         current_user.filled_survey = True
         db.session.commit()
         return redirect(url_for('home'))
-    #if current_user.filled_survey:
-    #    flash('You have already filled all the surveys','info')
-    #    return redirect(url_for('home'))
+    if current_user.filled_survey:
+        flash('You have already filled all the surveys','info')
+        return redirect(url_for('home'))
 
     return render_template('psy_tests/list_of_tests.html',title='Psychometric Evaluation Portal',ques=ques,names=names,num=num)
 
