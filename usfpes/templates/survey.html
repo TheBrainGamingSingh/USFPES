@@ -1,10 +1,13 @@
+
 {%extends "layout.html"%}
 {%block content%}
+
 
   <div class="content-section">
     <form action="" method="post">
       {{form.hidden_tag()}}
       <fieldset class="form-group">
+
         <legend class="border-bottom mb-4">Student Feedback Form</legend>
         {% for field in form %}
         <div class="form-group">
@@ -12,11 +15,11 @@
           {% if field.type == "RadioField" %}
           <h6>{{field.label(class="form-control-label")}}</h6>
           {% for subfield in field %}
-          <tr>
-            <td>{{ subfield(class="form-control-md") }}</td>
-            <td>{{ subfield.label(class="form-control-label") }}</td>
-          </tr>
-          {% endfor %}
+            <tr>
+              <td>{{ subfield(class="form-control-md") }}</td>
+              <td>{{ subfield.label(class="form-control-label") }}</td>
+            </tr>
+            {% endfor %}
           {% endif %}
           {% if field.type == "StringField" or field.type == "TextAreaField" %}
           <h6>{{field.label(class="form-control-label")}}</h6>

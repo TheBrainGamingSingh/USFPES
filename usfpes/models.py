@@ -31,43 +31,26 @@ class User(db.Model,UserMixin):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
-'''
+
 class Responses(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     course_name = db.Column(db.String, nullable=False)
-
     course_id = db.Column(db.String, nullable=False)
-
     faculty_name = db.Column(db.String, nullable=False)
-
     dept = db.Column(db.String, nullable=False)
-
     q1 = db.Column(db.Integer, nullable=False)
-
     q2 = db.Column(db.Integer, nullable=False)
-
     q3 = db.Column(db.Integer, nullable=False)
-
     q4 = db.Column(db.Integer, nullable=False)
-
     q5 = db.Column(db.Integer, nullable=False)
-
     q6 = db.Column(db.Integer, nullable=False)
-
     q7 = db.Column(db.Integer, nullable=False)
-
     q8 = db.Column(db.Integer, nullable=False)
-
     q9 = db.Column(db.Integer, nullable=False)
-
     q10 = db.Column(db.Integer, nullable=False)
-
     q11 = db.Column(db.Integer, nullable=False)
-
     q12 = db.Column(db.Integer, nullable=False)
-
     comments = db.Column(db.String)
-
 
     def __repr__(self):
         return f"Feedback: ('{self.course_name}', '{self.course_id}', '{self.faculty_name}', '{self.dept}')"
-'''

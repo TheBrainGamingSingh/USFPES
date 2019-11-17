@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from usfpes import app,db,bcrypt,mail
-from usfpes.models import User
+from usfpes.models import User,Responses
 from usfpes.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, PasswordResetForm,SurveyForm
 from flask_login import current_user,login_user,logout_user,login_required
 from flask_mail import Message
@@ -163,7 +163,9 @@ def reset_token(token):
 def survey():
     form = SurveyForm()
     if form.validate_on_submit():
+        response = Responses(course_name=form.course_name.data,course_id=form.course_id.data,faculty_name=form.faculty_name.data,dept=form.dept.data,q1=form.q1.data,q2=form.q2.data,q3=form.q3.data,q4=form.q4.data,q5=form.q5.data,q6=form.q6.data,q7=form.q7.data,q8=form.q8.data,q9=form.q9.data,q10=form.q10.data,q11=form.q11.data,q12=form.q12.data,comments=form.text_area.data)
+        db.session.add(response)
+        db.session.commit()
         flash(f"Feedback submitted succesfully for Faculty:{form.faculty_name.data}, for the course {form.course_id.data}:{form.course_name.data}!", 'success')
-        #database
         return redirect(url_for('home'))
     return render_template('survey.html', title='Student Survey', form=form)
