@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from usfpes import app,db,bcrypt,mail
 from usfpes.models import User
-from usfpes.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, PasswordResetForm
+from usfpes.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, PasswordResetForm,SurveyForm
 from flask_login import current_user,login_user,logout_user,login_required
 from flask_mail import Message
 
@@ -156,3 +156,14 @@ def reset_token(token):
         flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.html',title='Reset Password',form=form)
+
+
+@app.route('/survey', methods=['GET', 'POST'])
+@login_required
+def survey():
+    form = SurveyForm()
+    if form.validate_on_submit():
+        flash(f"Feedback submitted succesfully for Faculty:{form.faculty_name.data}, for the course {form.course_id.data}:{form.course_name.data}!", 'success')
+        #database
+        return redirect(url_for('home'))
+    return render_template('survey.html', title='Student Survey', form=form)

@@ -5,14 +5,29 @@
   <h4>Please fill in the list of surveys.</h4>
   <br>
   {% for i in range(ques | length) %}
-       <p class="text-secondary">
-       {% if i > num %}
-       <h6>{{i + 1}}. {{names[i]}}</h6> &#x274C You have not filled this survey.
-       {% elif i == num %}
-       <h6>{{i + 1}}. <a href="{{ ques[i] }}">{{names[i]}}</a></h6> &#9997 Fill this survey to proceed.
-       {% else %}
-       <h6>{{i + 1}}. {{names[i]}}</h6> &#9989 Great! You have filled this survey.
-       {% endif %}
-       </p>
+      <article class="media content-section">
+       <div class="media-body">
+         <div class="article-metadata">
+           {% if i > num %}
+           <small class="text-muted">&#x274C You have not filled this survey.</small>
+           {% elif i == num %}
+           <small class="text-muted">&#9997 Fill this survey to proceed.</small>
+           {% else %}
+           <small class="text-muted">&#9989 Great! You have filled this survey.</small>
+           {% endif %}
+         </div>
+
+
+         {% if i > num %}
+         <h6>{{i + 1}}. {{names[i]}}</h6>
+         {% elif i == num %}
+         <h6>{{i + 1}}. <a href="{{ ques[i] }}">{{names[i]}}</a></h6>
+         {% else %}
+         <h6>{{i + 1}}. {{names[i]}}</h6>
+         {% endif %}
+
+
+         </div>
+      </article>
    {% endfor %}
 {% endblock content %}
