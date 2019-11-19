@@ -48,6 +48,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
+        send_welcome_email(user)
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -117,6 +118,15 @@ def account():
 
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file,form=form)
+
+def send_welcome_email(user):
+    msg = Message('Unified Student Feedback and Psychometric Evaluation System',sender='usfpes@gmail.com',recipients=[user.email])
+    msg.body = f'''You have succesfully registered for Unified Student Feedback and Psychometric Evaluation System.
+
+Your username is {user.username}.
+Student ID associated with the username is {user.student_id}.
+'''
+    mail.send(msg)
 
 def send_reset_email(user):
     token = user.get_reset_token()
