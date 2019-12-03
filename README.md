@@ -8,6 +8,6 @@ pip install -r requirements.txt
 To run
 
 ```bash
-cd USFPEC
+cd USFPES
 python run.py
 ```
