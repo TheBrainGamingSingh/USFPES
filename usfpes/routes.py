@@ -1,5 +1,6 @@
 import os
 import secrets
+from datetime import timedelta
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from usfpes import app,db,bcrypt,mail
@@ -29,7 +30,8 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
+            delta = timedelta(minutes=15)
+            login_user(user, remember=form.remember.data,duration=delta)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
@@ -58,12 +60,30 @@ def logout():
     flash('You have successfully logged out.', 'success')
     return redirect(url_for('home'))
 
-names = ['Procastination Survey',
+names = ['Social Intelligence',
+         'Procrastination',
+         'Cognition',
          'Self Esteem Survey',
-         'Ten Item Personality Test']
-ques = ['https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=YTJzz',
+         'Cognitive Flexibility',
+         'Narcissism',
+         'Social Media',
+         'Internet Usage',
+         'Loneliness',
+         'Ten Item Personality Test',
+         'Risk Taking',
+         'Flourishing Scale']
+ques = ['https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=gCtsv',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=YTJzz',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=MJEWG',
         'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=vfQcw',
-        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=Z2huR']
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=4c9jf',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=JuVjm',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=rbc2T',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=Lc8xQ',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=QHKsK',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=Z2huR',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=jJZ43',
+        'https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=fuMBR']
 
 @app.route("/psyeve/<int:num>",methods=['GET', 'POST'])
 @login_required
