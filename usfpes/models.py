@@ -15,6 +15,8 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String(60), nullable=False)
     student_id = db.Column(db.String(8),nullable=False,unique=True)
     filled_survey = db.Column(db.Boolean(),unique=False, default=False)
+    last_filled = db.Column(db.Integer, unique=False,default=0)
+
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)

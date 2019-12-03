@@ -6,4 +6,4 @@ IPAddr = socket.gethostbyname(hostname)
 
 if __name__ == '__main__':
     #print(basedir)
-    app.run(debug=True,host=IPAddr,port='8000')
+    app.run(debug=True,host='127.0.0.1',port='8000')

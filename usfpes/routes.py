@@ -68,6 +68,12 @@ ques = ['https://www.psytoolkit.org/cgi-bin/psy2.6.1/survey?s=YTJzz',
 @app.route("/psyeve/<int:num>",methods=['GET', 'POST'])
 @login_required
 def psyeve(num):
+    if current_user.filled_survey:
+        flash('You have already filled all the surveys','info')
+        return redirect(url_for('home'))
+    if num != current_user.last_filled:
+        return redirect(url_for('psyeve',num=current_user.last_filled))
+        #return render_template('psy_tests/list_of_tests.html',title='Psychometric Evaluation Portal',ques=ques,names=names,num=current_user.last_filled)
     if num > len(ques):
         return render_template('errors/404.html'), 404
     if num == len(ques):
@@ -75,11 +81,17 @@ def psyeve(num):
         current_user.filled_survey = True
         db.session.commit()
         return redirect(url_for('home'))
-    if current_user.filled_survey:
-        flash('You have already filled all the surveys','info')
-        return redirect(url_for('home'))
 
     return render_template('psy_tests/list_of_tests.html',title='Psychometric Evaluation Portal',ques=ques,names=names,num=num)
+
+
+@app.route("/psyeve/success",methods=['GET', 'POST'])
+@login_required
+def psyevesuccess():
+    flash('Survey filled succesfully.','success')
+    current_user.last_filled = current_user.last_filled + 1
+    db.session.commit()
+    return redirect(url_for('psyeve',num=current_user.last_filled))
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -93,7 +105,6 @@ def save_picture(form_picture):
     i.save(picture_path)
     #form_picture.save(picture_path)
     return picture_fn
-
 
 
 @app.route("/account",methods=['GET', 'POST'])
